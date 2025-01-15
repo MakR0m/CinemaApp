@@ -1,11 +1,13 @@
 ﻿using CinemaApp.Core.Interfaces;
 using CinemaApp.Core.Models;
+using CinemaApp.UI.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CinemaApp.UI.ViewModels
 {
@@ -16,11 +18,13 @@ namespace CinemaApp.UI.ViewModels
                                                              // и призципу разделения ответственности (Separaion of Concerns
 
         ObservableCollection<Movie> Movies { get; set; }
+        public ICommand LoadMovieCommand { get;}
 
         public PosterViewModel(IMovieRepository repository)
         {
             _movieRepository = repository;
             Movies = new ObservableCollection<Movie>();
+            LoadMovieCommand = new RelayCommand(async () => await LoadMoviesAsnync());  //Вызов комманды LoadMovies
         }
 
         public async Task LoadMoviesAsnync()
