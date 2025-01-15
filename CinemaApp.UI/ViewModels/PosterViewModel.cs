@@ -17,17 +17,19 @@ namespace CinemaApp.UI.ViewModels
                                                              // Соответствует принципу внедрения зависимосимостей (Dependency Injection)
                                                              // и призципу разделения ответственности (Separaion of Concerns
 
-        ObservableCollection<Movie> Movies { get; set; }
+        public ObservableCollection<Movie> Movies { get; set; }
         public ICommand LoadMovieCommand { get;}
 
         public PosterViewModel(IMovieRepository repository)
         {
             _movieRepository = repository;
             Movies = new ObservableCollection<Movie>();
-            LoadMovieCommand = new RelayCommand(async () => await LoadMoviesAsnync());  //Вызов комманды LoadMovies
+            LoadMovieCommand = new RelayCommand(async () => await LoadMoviesAsync());  //Мы связали команду и метод, который она будет выполнять,
+                                                                                        //это сделано в конструкторе, чтобы она свойство не могло выполнять
+                                                                                        //другие методы, через конструктор так же можно будет использовать DI
         }
 
-        public async Task LoadMoviesAsnync()
+        public async Task LoadMoviesAsync()
         {
             var movies = await _movieRepository.GetAllAsync();
             Movies.Clear();

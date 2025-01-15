@@ -7,6 +7,20 @@ namespace CinemaApp.Data.Repositories
     {
         private readonly List<Movie> _movies;
 
+
+        public MovieRepository() //Тестовые данные
+        {
+            _movies = new List<Movie>()
+            {
+                new Movie {Id=1,Tittle="65 миллионов лет назад",Description="Что-то",Duration = new TimeSpan(2,49,0),PosterUrl="Images/Posters/1.jpg"},
+                new Movie {Id=2,Tittle="Микро женщина",Description="Что-то",Duration = new TimeSpan(2,20,0),PosterUrl="Images/Posters/2.jpg"},
+                new Movie {Id=3,Tittle="Цветной спайс",Description="Что-то",Duration = new TimeSpan(2,39,0),PosterUrl="Images/Posters/3.jpg"},
+                new Movie {Id=4,Tittle="Какой то фильм",Description="Что-то",Duration = new TimeSpan(2,29,0),PosterUrl="Images/Posters/4.jpg"},
+                new Movie {Id=5,Tittle="Звездные вояки",Description="Что-то",Duration = new TimeSpan(3,30,0),PosterUrl="Images/Posters/5.jpg"},
+            };
+        }
+
+
         public async Task<IEnumerable<Movie>> GetAllAsync()
         {
             return await Task.FromResult(_movies);
