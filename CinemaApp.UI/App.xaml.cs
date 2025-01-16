@@ -24,14 +24,14 @@ namespace CinemaApp.UI
             services.AddSingleton<IMovieRepository, MovieRepository>(); //Регистрирует муви реп как синглтон интерфейса муви реп, это гарантирует,
                                                                         //что один и тот же экземпляр муви реп будет использоваться в приложении
 
-            services.AddTransient<PosterViewModel>();                   //Временная зависимость (каждый раз будет создаваться новый viewmodel
+            services.AddTransient<MoviesViewModel>();                   //Временная зависимость (каждый раз будет создаваться новый viewmodel
 
             ServiceProvider = services.BuildServiceProvider();
 
             // Создаем главное окно с внедрением зависимостей
             var mainWindow = new MainWindow
             {
-                DataContext = ServiceProvider.GetRequiredService<PosterViewModel>()   //контейнер создает PosterViewModel и
+                DataContext = ServiceProvider.GetRequiredService<MoviesViewModel>()   //контейнер создает PosterViewModel и
                                                                                       //автоматически внедряет IMovieRepository в конструктор
             };
             mainWindow.Show();

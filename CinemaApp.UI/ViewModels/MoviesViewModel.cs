@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace CinemaApp.UI.ViewModels
 {
-    public class PosterViewModel
+    public class MoviesViewModel
     {
         private readonly IMovieRepository _movieRepository;  // Данное поле нужно, чтобы вьюмодел работала с данными не зная откуда они берутся.
                                                              // Соответствует принципу внедрения зависимосимостей (Dependency Injection)
@@ -20,7 +20,7 @@ namespace CinemaApp.UI.ViewModels
         public ObservableCollection<Movie> Movies { get; set; }
         public ICommand LoadMovieCommand { get;}
 
-        public PosterViewModel(IMovieRepository repository)
+        public MoviesViewModel(IMovieRepository repository)
         {
             _movieRepository = repository;
             Movies = new ObservableCollection<Movie>();
