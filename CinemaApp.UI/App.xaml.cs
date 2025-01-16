@@ -1,6 +1,7 @@
 ﻿using CinemaApp.Core.Interfaces;
 using CinemaApp.Data.Repositories;
 using CinemaApp.UI.ViewModels;
+using CinemaApp.UI.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Data;
@@ -21,18 +22,30 @@ namespace CinemaApp.UI
 
             //Настраиваем контейнер зависимостей
             var services = new ServiceCollection();
+
+            //Регистрация репозиториев
             services.AddSingleton<IMovieRepository, MovieRepository>(); //Регистрирует муви реп как синглтон интерфейса муви реп, это гарантирует,
                                                                         //что один и тот же экземпляр муви реп будет использоваться в приложении
 
+            //Регистрация VM
+            services.AddSingleton<MainWindowViewModel>();               //Один экземпляр на все время работы
             services.AddTransient<MoviesViewModel>();                   //Временная зависимость (каждый раз будет создаваться новый viewmodel
+
+            //Регистрация View
+            services.AddTransient<MoviesView>(provider => 
+            { 
+                var viewModel = provider.GetService<MoviesViewModel>();
+                return new MoviesView { DataContext = viewModel };
+            }
+            );
 
             ServiceProvider = services.BuildServiceProvider();
 
             // Создаем главное окно с внедрением зависимостей
             var mainWindow = new MainWindow
             {
-                DataContext = ServiceProvider.GetRequiredService<MoviesViewModel>()   //контейнер создает PosterViewModel и
-                                                                                      //автоматически внедряет IMovieRepository в конструктор
+                DataContext = ServiceProvider.GetRequiredService<MainWindowViewModel>()   //контейнер создает PosterViewModel и
+                                                                                         //автоматически внедряет IMovieRepository в конструктор
             };
             mainWindow.Show();
 
