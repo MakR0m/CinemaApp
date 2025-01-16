@@ -6,8 +6,13 @@
              xmlns:local="clr-namespace:CinemaApp.UI.Views"
              xmlns:vm="clr-namespace:CinemaApp.UI.ViewModels"
              xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:conv="clr-namespace:CinemaApp.UI.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <conv:NullToBoolConverter x:Key="NullToBoolConverter"/>
+    </UserControl.Resources>
+    
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="Loaded">
             <behaviors:InvokeCommandAction Command="{Binding LoadMovieCommand}"/>
@@ -15,7 +20,11 @@
     </behaviors:Interaction.Triggers>
 
     <Grid>
-        <ListBox ItemsSource="{Binding Movies}" HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <ListBox Grid.Row="0" ItemsSource="{Binding Movies}" SelectedItem="{Binding SelectedMovie}" HorizontalAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical" Margin="5">
@@ -33,5 +42,18 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="Добавить" 
+                    Command="{Binding AddMovieCommand}"
+                    Width="100" Height="20" Margin="5"/>
+            <Button Content="Редактировать" Command="{Binding EditMovieCommand}" 
+                    CommandParameter="{Binding SelectedMovie, Converter={StaticResource NullToBoolConverter}}"
+                    IsEnabled="{Binding SelectedMovie, Converter={StaticResource NullToBoolConverter}}"
+                    Width="100" Height="20" Margin="5"/>
+            <Button Content="Удалить" Command="{Binding DeleteMovieCommand}" 
+                    CommandParameter="{Binding SelectedMovie, Converter={StaticResource NullToBoolConverter}}"
+                    IsEnabled="{Binding SelectedMovie, Converter={StaticResource NullToBoolConverter}}"
+                    Width="100" Height="20" Margin="5"/>
+        </StackPanel>
     </Grid>
 </UserControl>
