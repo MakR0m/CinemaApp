@@ -19,7 +19,15 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical" Margin="5">
-                        <Image Source="{Binding PosterUrl}" Width="100" Height="150"/>
+                        <Image Source="{Binding PosterUrl}" Width="100" Height="150">
+                            <Image.ToolTip>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Tittle}"/>
+                                    <TextBlock Text="{Binding Description}"/>
+                                    <TextBlock Text="{Binding Duration, StringFormat='Длительность {0} минут'}"/>
+                                </StackPanel>
+                            </Image.ToolTip>
+                        </Image>
                         <TextBlock Text="asdsadasd" FontSize="15"/>
                     </StackPanel>
                 </DataTemplate>
