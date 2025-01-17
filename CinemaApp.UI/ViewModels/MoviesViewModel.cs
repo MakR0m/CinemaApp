@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace CinemaApp.UI.ViewModels
@@ -26,58 +27,87 @@ namespace CinemaApp.UI.ViewModels
         public ICommand DeleteMovieCommand { get; }
 
 
-
-
-
         public MoviesViewModel(IMovieRepository repository)
         {
             _movieRepository = repository;
             Movies = new ObservableCollection<Movie>();
-            LoadMovieCommand = new RelayCommand(async () => await LoadMoviesAsync());  //Мы связали команду и метод, который она будет выполнять,это сделано в конструкторе, чтобы она свойство не могло выполнять другие методы, через конструктор так же можно будет использовать DI
-            AddMovieCommand = new RelayCommand(async () => await AddMovieAsync());
-            EditMovieCommand = new RelayCommand(async () => await EditMovieAsync());
-            DeleteMovieCommand = new RelayCommand(async () => await DeleteMovieAsync());
+            LoadMovieCommand = new RelayCommand(() => LoadMoviesAsync());  //Мы связали команду и метод, который она будет выполнять,это сделано в конструкторе, чтобы она свойство не могло выполнять другие методы, через конструктор так же можно будет использовать DI
+            AddMovieCommand = new RelayCommand(() => AddMovieAsync());
+            EditMovieCommand = new RelayCommand(() => EditMovieAsync());
+            DeleteMovieCommand = new RelayCommand(() => DeleteMovieAsync());
         }
 
         private async Task LoadMoviesAsync()
         {
-            var movies = await _movieRepository.GetAllAsync();
-            Movies.Clear();
-            foreach (var movie in movies)
+            await ExecuteWithErrorHandling(async () =>
             {
-                Movies.Add(movie);
-            } 
+                var movies = await _movieRepository.GetAllAsync();
+                Movies.Clear();
+                foreach (var movie in movies)
+                {
+                    Movies.Add(movie);
+                }
+            });
         }
 
         private async Task AddMovieAsync()
         {
-            var newMovie = new Movie()
+
+            await ExecuteWithErrorHandling(async () =>
             {
-                Id = Movies.Last().Id + 1,
-                PosterUrl = "/Images/Posters/default.jpg",
-                Description = "adasdsad",
-                Duration = new TimeSpan(2,10,0)
-            };
-            await _movieRepository.AddAsync(newMovie);
-            Movies.Add(newMovie);
+                var newMovie = new Movie()
+                {
+                    Id = Movies.Last().Id + 1,
+                    PosterUrl = "/Images/Posters/default.jpg",
+                    Description = "adasdsad",
+                    Duration = new TimeSpan(2, 10, 0)
+                };
+                await _movieRepository.AddAsync(newMovie);
+                Movies.Add(newMovie);
+                MessageBox.Show("Успех");
+            });
+
         }
 
         private async Task EditMovieAsync()
         {
-            if (SelectedMovie != null)
+
+            await ExecuteWithErrorHandling(async () =>
             {
-                SelectedMovie.Tittle = "Редактед фильм";
-                await _movieRepository.UpdateAsync(SelectedMovie);
-            }
+                if (SelectedMovie != null)
+                {
+                    SelectedMovie.Tittle = "Редактед фильм";
+                    await _movieRepository.UpdateAsync(SelectedMovie);
+                    MessageBox.Show("Успех");
+                }
+            });
+
         }
 
         private async Task DeleteMovieAsync()
         {
-            if (SelectedMovie != null)
+            await ExecuteWithErrorHandling(async () =>
             {
-                await _movieRepository.DeleteAsync(SelectedMovie.Id);
-                Movies.Remove(SelectedMovie);
-                SelectedMovie = null;
+                if (SelectedMovie != null)
+                {
+                    await _movieRepository.DeleteAsync(SelectedMovie.Id);
+                    Movies.Remove(SelectedMovie);
+                    SelectedMovie = null;
+                    MessageBox.Show("Успех");
+                }
+            });
+
+        }
+
+        public async Task ExecuteWithErrorHandling (Func<Task> action)
+        {
+            try
+            {
+                await action();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка {ex}");
             }
         }
 
